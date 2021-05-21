@@ -102,3 +102,6 @@ dist
 
 # TernJS port file
 .tern-port
+
+# 몽고 DB 클러스터 액세스 비밀번호
+config/
