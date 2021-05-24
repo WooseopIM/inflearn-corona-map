@@ -933,9 +933,12 @@
 
    - 데이터가 많아지면 지도 서비스가 느려질 가능성이 조금 있다.
 
-   - 다수의 마커들을 한 곳으로 모아줌으로써 해결 -> 클러스터링!
-
+   - 겹쳐있는 다수의 마커들을 한 곳으로 모아줌으로써 최적화 -> 클러스터링!
 2. 마커 클러스터링 기능 구현
+   - [깃허브 레포 소스](https://github.com/navermaps/marker-tools.js/blob/master/marker-clustering/src/MarkerClustering.js) 가져다 쓰기
+   - javascripts 폴더 아래에 MarkerClustering.js 파일을 만들어서 복사
+   - index.ejs 파일에서 불러온다. 단, main.js 파일을 부르는 위치보다 위에서 불러온다.
+     왜냐하면, main.js 파일에서 MarkerClustering.js의 기능을 사용할 것이기 때문에
 
 ## 07. 행정구역(도) 데이터 레이어 표시
 
