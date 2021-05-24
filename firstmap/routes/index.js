@@ -14,10 +14,10 @@ router.get("/upload", (req, res, next) => {
 
 /* 실제 DB와 통신 */
 router.post("/location", (req, res, next) => {
-  const { title, address, lat, lng } = req.body;
+  const { title, desc, lat, lng } = req.body;
   let location = new locationModel(); // location 안에 데이터를 넣을 수 있다.
   location.title = title;
-  location.address = address;
+  location.desc = desc;
   location.lat = lat;
   location.lng = lng;
 

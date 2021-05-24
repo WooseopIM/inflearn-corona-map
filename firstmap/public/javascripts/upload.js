@@ -131,11 +131,11 @@ function removeMarker() {
   markerList = [];
 }
 
-function onSubmit(title, address, lat, lng) {
+function onSubmit(title, desc, lat, lng) {
   // 서버에 데이터를 넘길 수 있도록 요청하는 jQuery 문법 중 Ajax
   $.ajax({
     url: "/location",
-    data: { title, address, lat, lng },
+    data: { title, desc, lat, lng },
     type: "POST",
   })
     .done((response) => {

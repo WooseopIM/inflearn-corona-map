@@ -1,5 +1,5 @@
 var mapOptions = {
-  center: new naver.maps.LatLng(37.3595704, 127.105399),
+  center: new naver.maps.LatLng(36.37049682178313, 127.36128608273715),
   zoom: 10,
 };
 
@@ -25,6 +25,7 @@ var map = new naver.maps.Map("map", mapOptions);
   ];
 */
 
+/* Mongo DB에 request 보내서 데이터 가져오기 */
 $.ajax({
   url: "/location",
   type: "GET",
@@ -66,7 +67,7 @@ $.ajax({
     const content = `
     <div class="infowindow_wrap">
       <div class="infowindow_title">${target.title}</div>
-      <div class="infowindow_address">${target.address}</div>
+      <div class="infowindow_address">${target.desc}</div>
     </div>
   `;
 
@@ -110,7 +111,7 @@ $.ajax({
     map: map,
     markers: markerList,
     disableClickZoom: false,
-    gridSize: 20,
+    gridSize: 100,
     icons: [cluster1, cluster2, cluster3],
     indexGernerator: [2, 5, 10], // 숫자에 맞게 클러스터가 생성되는 역할
     stylingFunction: (clusterMarker, count) => {
@@ -120,7 +121,7 @@ $.ajax({
   });
 });
 
-/* 구획 */
+/* 행정구역 구획 */
 
 const urlPrefix = "https://navermaps.github.io/maps.js/docs/data/region";
 const urlSuffix = ".json";
