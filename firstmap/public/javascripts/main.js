@@ -70,7 +70,6 @@ $.ajax({
       <div class="infowindow_address">${target.desc}</div>
     </div>
   `;
-
     const infowindow = new naver.maps.InfoWindow({
       content: content,
       backgroundColor: "#00ff0000",
@@ -119,6 +118,25 @@ $.ajax({
       $(clusterMarker.getElement()).find("div:first-child").text(count);
     },
   });
+
+  console.log(data);
+  const createTable = (data) => {
+    let table = document.getElementById("table-body");
+    for (let i = 0; i < data.length; i++) {
+      console.log(markerList[i]);
+      let row = `
+      <tr>
+      <td>${data[i].title}</td>
+      <td>${data[i].lat}</td>
+      <td>${data[i].lng}</td>
+      <td>${data[i].desc}</td>
+      </tr>
+      `;
+
+      table.innerHTML += row;
+    }
+  };
+  createTable(data);
 });
 
 /* 행정구역 구획 */
