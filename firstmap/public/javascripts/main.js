@@ -86,4 +86,126 @@ $.ajax({
     naver.maps.Event.addListener(markerList[i], "click", getClickHandler(i));
     naver.maps.Event.addListener(map, "click", getClickMap(i));
   }
+
+  /* 
+    클러스터를 3개로 나누는 이유: 클러스터에 모이는 숫자에 맞게 클러스터 크기를 정해주기 위해 
+    예: 마커가 10개 이하 -> class="cluster1"인 클러스터를 보여줌
+        마커가 100개 이하 -> class="cluster2"인 클러스터를 보여줌
+  */
+  const cluster1 = {
+    content: `<div class="cluster1"></div>`,
+  };
+
+  const cluster2 = {
+    content: `<div class="cluster2"></div>`,
+  };
+
+  const cluster3 = {
+    content: `<div class="cluster3"></div>`,
+  };
+
+  const markerClustering = new MarkerClustering({
+    minClusterSize: 2,
+    maxZoom: 12,
+    map: map,
+    markers: markerList,
+    disableClickZoom: false,
+    gridSize: 20,
+    icons: [cluster1, cluster2, cluster3],
+    indexGernerator: [2, 5, 10], // 숫자에 맞게 클러스터가 생성되는 역할
+    stylingFunction: (clusterMarker, count) => {
+      // 클러스터 안에 몇 개의 마커가 들어가 있는지 시각적으로 확인할 수 있도록
+      $(clusterMarker.getElement()).find("div:first-child").text(count);
+    },
+  });
 });
+
+/* 구획 */
+
+const urlPrefix = "https://navermaps.github.io/maps.js/docs/data/region";
+const urlSuffix = ".json";
+
+let regionGeoJson = [];
+let loadCount = 0;
+
+const tooltip = $(`<div style="position:absolute; z-index:1000; padding:5px 10px; background:white; border:1px solid black; font-size:14px; display:none; pointer-events:none;"></div>`);
+
+tooltip.appendTo(map.getPanes().floatPane); // tooltip 지도 안에 넣기
+
+naver.maps.Event.once(map, "init_stylemap", () => {
+  for (let i = 1; i < 18; i++) {
+    let keyword = i.toString();
+    if (keyword.length === 1) {
+      keyword = "0" + keyword;
+    }
+
+    $.ajax({
+      url: urlPrefix + keyword + urlSuffix,
+    }).done((geojson) => {
+      regionGeoJson.push(geojson);
+      loadCount++;
+      if (loadCount === 17) {
+        startDataLayer();
+      }
+    });
+  }
+});
+
+function startDataLayer() {
+  map.data.setStyle((feature) => {
+    const styleOptions = {
+      fillColor: "#ff0000",
+      fillOpacity: 0.0001,
+      strokeColor: "#ff0000",
+      strokeWeight: 2,
+      strokeOpacity: 0.4,
+    };
+
+    if (feature.getProperty("focus")) {
+      styleOptions.fillOpacity = 0.6;
+      styleOptions.fillColor = "#0f0";
+      styleOptions.strokeColor = "#0f0";
+      styleOptions.strokeWeight = 4;
+      styleOptions.strokeOpaticy = 1;
+    }
+
+    return styleOptions;
+  });
+
+  regionGeoJson.forEach((geojson) => {
+    map.data.addGeoJson(geojson);
+  });
+
+  map.data.addListener("click", (e) => {
+    let feature = e.feature;
+    if (feature.getProperty("focus") !== true) {
+      // 클릭이 되어 있지 않을 때
+      feature.setProperty("focus", true);
+    } else {
+      feature.setProperty("focus", false);
+    }
+  });
+
+  /* 마우스 hover 이벤트 */
+  map.data.addListener("mouseover", (e) => {
+    let feature = e.feature;
+    let regionName = feature.getProperty("area1");
+    tooltip
+      .css({
+        display: "block",
+        left: e.offset.x,
+        top: e.offset.y,
+      })
+      .text(regionName);
+    map.data.overrideStyle(feature, {
+      fillOpacity: 0.6,
+      strokeWeight: 4,
+      strokeOpacity: 1,
+    });
+  });
+
+  map.data.addListener("mouseout", (e) => {
+    tooltip.hide().empty();
+    map.data.revertStyle();
+  });
+}
