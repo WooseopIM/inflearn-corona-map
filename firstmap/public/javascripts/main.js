@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 var mapOptions = {
   center: new naver.maps.LatLng(36.37049682178313, 127.36128608273715),
   zoom: 1,

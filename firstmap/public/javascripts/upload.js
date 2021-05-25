@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const mapContainer = document.getElementById("map");
 const mapOption = {
   center: new daum.maps.LatLng(37.554477, 126.970419),
