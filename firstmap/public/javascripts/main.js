@@ -1,6 +1,6 @@
 var mapOptions = {
   center: new naver.maps.LatLng(36.37049682178313, 127.36128608273715),
-  zoom: 10,
+  zoom: 1,
 };
 
 var map = new naver.maps.Map("map", mapOptions);
@@ -24,6 +24,17 @@ var map = new naver.maps.Map("map", mapOptions);
     },
   ];
 */
+
+/* 체크박스 전역 변수 */
+let checked = true;
+
+function getCheckboxValue(e) {
+  if (e.target.checked) {
+    checked = true;
+  } else {
+    checked = false;
+  }
+}
 
 /* Mongo DB에 request 보내서 데이터 가져오기 */
 $.ajax({
@@ -81,6 +92,42 @@ $.ajax({
     infowindowList.push(infowindow);
   }
 
+  /* 현재 지도에서 보이는 부분만  */
+  naver.maps.Event.addListener(map, "idle", () => {
+    updateMarkerList(map, markerList);
+  });
+
+  /* 지도의 움직임이 발생했다가 멈추면 실행될 함수 */
+  function updateMarkerList(map, markerList) {
+    let mapBounds = map.getBounds();
+    let marker, position;
+
+    let tmp = [];
+    for (let i = 0; i < markerList.length; i++) {
+      marker = markerList[i];
+      position = marker.getPosition();
+
+      if (mapBounds.hasLatLng(position)) {
+        showMarker(map, marker);
+        tmp.push(marker);
+      } else {
+        hideMarker(map, marker);
+      }
+    }
+    markerList = tmp;
+    console.log(tmp, markerList);
+  }
+
+  function showMarker(map, marker) {
+    if (marker.getMap()) return;
+    marker.setMap(map);
+  }
+
+  function hideMarker(map, marker) {
+    if (!marker.getMap()) return;
+    marker.setMap(null);
+  }
+
   /* i번째 마커를 클릭했을 때, 인포 윈도우를 생성하는 getClickHandler 함수 실행 -> 만들어주기 */
   for (let i = 0, ii = markerList.length; i < ii; i++) {
     naver.maps.Event.addListener(markerList[i], "click", getClickHandler(i));
@@ -119,11 +166,9 @@ $.ajax({
     },
   });
 
-  console.log(data);
   const createTable = (data) => {
     let table = document.getElementById("table-body");
     for (let i = 0; i < data.length; i++) {
-      console.log(markerList[i]);
       let row = `
       <tr>
       <td>${data[i].title}</td>
