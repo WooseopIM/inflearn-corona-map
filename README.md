@@ -939,9 +939,12 @@
    - javascripts 폴더 아래에 MarkerClustering.js 파일을 만들어서 복사
    - index.ejs 파일에서 불러온다. 단, main.js 파일을 부르는 위치보다 위에서 불러온다.
      왜냐하면, main.js 파일에서 MarkerClustering.js의 기능을 사용할 것이기 때문에
+   - main.js의 ajax.done((response) => {`여기`})에다가 작성한다.
+   - 클러스터 css도 변경
 
 ## 07. 행정구역(도) 데이터 레이어 표시
 
 1. 행정구역 데이터 레이어 소개 및 표시하기
+   - 
 2. 행정 구역 데이터 레이어 클릭 / 마우스 이벤트 추가하기
 
